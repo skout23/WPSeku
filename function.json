@@ -1,0 +1,9 @@
+{
+  "name": "run_wpseku",
+  "description": "Scan target",
+  "runtime": "python2.7",
+  "handler": "main.handle",
+  "role": "YOUR_ROLE_ARN",
+  "memory": 128,
+  "timeout": 300
+}

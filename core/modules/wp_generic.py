@@ -1,6 +1,6 @@
-#!/usr/bin/env python 
-# -*- coding:utf-8 -*- 
-# WPSeku - Wordpress Security Scanner 
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+# WPSeku - Wordpress Security Scanner
 # Coded by Momo Outaadi (@M4ll0k) (C) 2017
 
 from core.lib import wp_checker
@@ -8,8 +8,9 @@ from core.lib import wp_colors
 from core.lib import wp_print
 from core.lib import wp_request
 import re
-import requests 
-import json 
+import requests
+import json
+
 
 class WPGeneric:
 	"""WordPress Generic Checks"""
@@ -17,19 +18,19 @@ class WPGeneric:
 	print_ = wp_print.WPPrint()
 	def __init__(self,agent,proxy,redirect,url):
 		self.url = url
-		# request 
+		# request
 		self.req = wp_request.WPRequest(agent=agent,proxy=proxy,redir=redirect)
 
 	def xmlrpc(self):
-		# Check xmlrpc.php 
+		# Check xmlrpc.php
 		try:
 			url = self.check_.check(self.url,"/xmlrpc.php")
-			# return html,url,code and info 
-			html,uri,code,info = self.req.Send(url) 
+			# return html,url,code and info
+			html,uri,code,info = self.req.Send(url)
 			if html and code == 405:
 				self.print_.aprint("XML-RPC Interface available under: {}".format(uri))
 		except Exception,e:
-			pass 
+			pass
 
 	def robots(self):
 		# Check robots.txt
@@ -63,10 +64,10 @@ class WPGeneric:
 			if html and code == 200:
 				self.print_.aprint("Readme available under: {}".format(uri))
 		except Exception,e:
-			pass 
+			pass
 
 	def fullpathdisc(self):
-		# Check full path disclosure 
+		# Check full path disclosure
 		try:
 			url = self.check_.check(self.url,"wp-includes/rss-functions.php")
 			# return html,url,code and info
@@ -86,7 +87,7 @@ class WPGeneric:
 			# return html,url,code and info
 			html,uri,code,info = self.req.Send(url)
 			# find wordpress version with this regex (\S+WordPress/(\d+.\d+[.\d+]*))
-			vers = re.findall('\S+WordPress/(\d+.\d+[.\d+]*)',html) 
+			vers = re.findall('\S+WordPress/(\d+.\d+[.\d+]*)',html)
 			if vers != []:
 				self.print_.aprint("Running WordPress version: %s"%(vers[0]))
 				# Check wordpress version vulns
@@ -169,7 +170,7 @@ class WPGeneric:
 	def headers(self):
 		# Check interesting headers
 		self.print_.aprint("Interesting headers: ")
-		# check url 
+		# check url
 		url = self.check_.check(self.url,"")
 		# return html,url,code and info
 		html,uri,code,info = self.req.Send(url)
@@ -205,7 +206,7 @@ class WPGeneric:
 		print ""
 
 	def wpconfig(self):
-		# Check wp-config.php 
+		# Check wp-config.php
 		try:
 			url = self.check_.check(self.url,"wp-config.php")
 			# return html,url,code and info
@@ -216,7 +217,7 @@ class WPGeneric:
 			pass
 
 	def wpconfigbackup(self):
-		# Check wp-config backup 
+		# Check wp-config backup
 		db = open("core/db/wpconfig.txt","rb")
 		for x in db:
 			try:
@@ -226,10 +227,10 @@ class WPGeneric:
 				if html and code == 200:
 					self.print_.bprint("wp-config backup available under: %s"%(uri))
 			except Exception,e:
-				pass 
+				pass
 
 	def wpconfigsm(self):
-		# Check wp-config-sample.php 
+		# Check wp-config-sample.php
 		try:
 			url = self.check_.check(self.url,"wp-config-sample.php")
 			# return html,url,code and info
@@ -267,7 +268,7 @@ class WPGeneric:
 
 	def pingback(self):
 		# Check pingback vulnerability
-		payload = """<?xml version="1.0" encoding="utf-8"?> 
+		payload = """<?xml version="1.0" encoding="utf-8"?>
 		<methodCall><methodName>pingback.ping</methodName><params>
 		<param><value><string>http://site.com:22</string></value></param>
 		<param><value><string>"""+self.url+"""<param><value><string></params></methodCall>"""
@@ -281,7 +282,7 @@ class WPGeneric:
 			pass
 
 	def wpvulns(self,ver):
-		# Check wordpress version vulns 
+		# Check wordpress version vulns
 		try:
 			v1,v2,v3 = [x.split('.') for x in ver][0]
 			self.vers = (v1+v2+v3)
@@ -307,9 +308,9 @@ class WPGeneric:
 					print ""
 			else:
 				self.print_.eprint("Not found vulnerabilities")
-				print 
+				print
 		except Exception,e:
-			print e 
+			print e
 
 	def init(self):
 		self.sitemap()
@@ -325,4 +326,3 @@ class WPGeneric:
 		self.fullpathdisc()
 		self.headers()
 		self.version()
-		
