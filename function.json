@@ -1,0 +1,12 @@
+{
+  "name": "runwpseku",
+  "description": "scan targets with WPSeku using local vendor directory",
+  "runtime": "python2.7",
+  "handler": "main.handle",
+  "role": "YOUR_ROLE_ARN",
+  "memory": 1536,
+  "timeout": 300,
+  "hooks": {
+    "build": "pip install --upgrade --force-reinstall -r requirements.txt -t vendor/"
+  }
+}

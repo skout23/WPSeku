@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# -*- coding:utf-8 -*- 
-# WPSeku - Wordpress Security Scanner 
+# -*- coding:utf-8 -*-
+# WPSeku - Wordpress Security Scanner
 # Coded by Momo Outaadi (M4ll0k) (C) 2017
 #
 # This program is free software: you can redistribute it and/or modify
@@ -22,6 +22,16 @@ import time
 import datetime
 import getopt
 import urlparse
+
+
+# Add vendor directory to module search path
+parent_dir = os.path.abspath(os.path.dirname(__file__))
+vendor_dir = os.path.join(parent_dir, 'vendor')
+
+sys.path.append(vendor_dir)
+
+output = []
+
 from core.lib import wp_colors
 from core.lib import wp_print
 from core.lib import wp_info
@@ -74,7 +84,7 @@ class WPSeku(object):
 		print "\t-a --agent\tSet user-agent"
 		print "\t-c --cookie\tSet cookie"
 		print "\t-r --redirect\tRedirection target url, defaul=True"
-		print "\t-h --help\tShow this help and exit\n"		
+		print "\t-h --help\tShow this help and exit\n"
 		print "Examples:"
 		print "\t{} -t http://www.target.com".format(name)
 		print "\t{} -t target.com/wp-admin/admin-ajax.php -q id=1&cat=2 -m POST [-x,-s,-l]".format(name)
@@ -83,7 +93,7 @@ class WPSeku(object):
 		sys.exit()
 
 	def CheckUrl(self,target):
-		# Check url 
+		# Check url
 		scheme = urlparse.urlsplit(target).scheme.lower()
 		netloc = urlparse.urlsplit(target).netloc.lower()
 		path = urlparse.urlsplit(target).path.lower()
@@ -93,7 +103,7 @@ class WPSeku(object):
 			return "http://"+path
 		if netloc != "":
 			url = scheme+"://"+netloc
-			return self.check_.check(url,path) 
+			return self.check_.check(url,path)
 
 	def Main(self):
 		# WPSeku main
@@ -102,7 +112,7 @@ class WPSeku(object):
 		try:
 			opts,args = getopt.getopt(self.kwargs,"t:xsl=:b:q:u:w:m:p:a:c:r:h:",["target=","xss","sql","lfi","brute=",
 				"query=","user=","wordlist=","method=","proxy=","agent=","cookie=","redirect=","help","update"])
-		except getopt.error,e: 
+		except getopt.error,e:
 			self.Usage()
 		# All opts
 		for opt,arg in opts:
@@ -112,36 +122,37 @@ class WPSeku(object):
 			if opt in ("-x","--xss"):
 				self.xss = True
 			if opt in ("-s","--sql"):
-				self.sql = True 
+				self.sql = True
 			if opt in ("-l","--lfi"):
-				self.lfi = True 
+				self.lfi = True
 			if opt in ("-b","--brute"):
 				self.brute = arg
 				if self.brute not in ["l","x"]:
 					sys.exit(self.print_.bprint("-b/--brute require args, l or x"))
 			if opt in ("-q","--query"):
-				self.query = arg 
+				self.query = arg
 			if opt in ("-u","--user"):
-				self.user = arg 
+				self.user = arg
 			if opt in ("-w","--wordlist"):
-				self.wordlist = arg 
+				self.wordlist = arg
 			if opt in ("-m","--method"):
-				self.method = arg 
+				self.method = arg
 			if opt in ("-p","--proxy"):
-				self.proxy = arg 
+				self.proxy = arg
 			if opt in ("-a","--agent"):
 				self.user_agent = arg
 			if opt in ("-c","--cookie"):
 				self.cookie = arg
 			if opt in ("-r","--redirect"):
-				self.redirect = arg 
+				self.redirect = arg
 			if opt in ("-h","--help"):
 				self.Usage()
-
 		#############################################
 		wp_banner.Banner()
 		self.print_.aprint("Target: %s"%(self.url))
+		output.append("Target: %s"%(self.url))
 		self.print_.aprint("Starting: %s"%(time.strftime('%d/%m/%Y %H:%M:%S')))
+		output.append("Starting: %s"%(time.strftime('%d/%m/%Y %H:%M:%S')))
 		print ""
 		if not self.user_agent: self.user_agent = "Mozilla/5.0"
 		if not self.proxy: self.proxy = None
@@ -181,5 +192,6 @@ if __name__ == "__main__":
 	try:
 		main = WPSeku(sys.argv[1:])
 		main.Main()
+		print output
 	except KeyboardInterrupt:
 		sys.exit("KeyboardInterrupt!!")
